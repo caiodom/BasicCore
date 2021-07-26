@@ -33,7 +33,7 @@ namespace Core.WebAPI.Controllers
             return CustomResponse();
         }
 
-        private void AddProcessingErrors(string error)
+        protected void AddProcessingErrors(string error)
         {
             Errors.Add(error);
         }

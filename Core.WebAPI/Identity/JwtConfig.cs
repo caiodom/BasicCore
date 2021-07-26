@@ -36,7 +36,7 @@ namespace Core.WebAPI.Identity
 
         public static void UseAuthConfiguration(this IApplicationBuilder app)
         {
-            app.UseAuthConfiguration();
+            app.UseAuthentication();
             app.UseAuthorization();
         }
     }
