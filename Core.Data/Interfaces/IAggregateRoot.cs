@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Data.Interface
+namespace Core.Data.Interfaces
 {
-    public interface IUnitOfWork
+    //aggregate class to map
+    public interface IAggregateRoot
     {
-        Task<bool> Commit();
     }
 }
