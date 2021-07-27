@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Data.Interfaces
+namespace Core.Application.DTO
 {
-    public interface IUnitOfWork
+    public class BaseEntityDTO
     {
-        Task<bool> Commit();
+        public Guid Id { get; set; }
     }
 }

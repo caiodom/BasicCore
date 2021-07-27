@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Data.Interfaces
+namespace Core.Interfaces
 {
     public interface IRepository<T> : IDisposable where T : BaseEntity, new()
     {

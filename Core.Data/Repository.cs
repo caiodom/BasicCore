@@ -1,5 +1,6 @@
-﻿using Core.Data.Interfaces;
+﻿
 using Core.DomainObjects;
+using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,30 +12,19 @@ using System.Threading.Tasks;
 
 namespace Core.Data
 {
-    public class Repository<T>:IRepository<T> where T:BaseEntity,new()
+    public abstract class Repository<T>:IRepository<T> where T:BaseEntity,new()
     {
         protected MainContext Db;
         protected DbSet<T> DbSet;
         public IUnitOfWork UnitOfWork => Db;
-        public Repository()
+        protected Repository(MainContext mainContext)
         {
-            
+            Db = mainContext;
+            DbSet= Db.Set<T>();
         }
 
-        public void SetDbContext(MainContext dbContext)
-        {
-            if (dbContext == null)
-                throw new ArgumentNullException(nameof(dbContext));
-
-            Db = dbContext;
-            DbSet = Db.Set<T>();
-            
-        }
         public virtual async Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
 
             if (asNoTracking)
             {
@@ -47,9 +37,7 @@ namespace Core.Data
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
+         
             if (asNoTracking)
             {
                 return await DbSet.AsNoTracking()
@@ -62,9 +50,7 @@ namespace Core.Data
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
+           
             if (asNoTracking)
                 return await DbSet.AsNoTracking().OrderBy(orderBy).Where(expression).ToListAsync().ConfigureAwait(false);
 
@@ -79,9 +65,7 @@ namespace Core.Data
 
         public virtual async Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
+          
             return asNoTracking
                 ? await DbSet.AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == entityId).ConfigureAwait(false)
                 : await DbSet.FindAsync(entityId).ConfigureAwait(false);
@@ -89,18 +73,18 @@ namespace Core.Data
 
         public virtual async Task AddAsync(T entity)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
+
+          
 
             DbSet.Add(entity);
             ///await DbSet.AddAsync(entity).ConfigureAwait(false);
             await SaveChangesAsync();
+           
         }
 
         public virtual async Task AddCollectionAsync(IEnumerable<T> entities)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
+          
 
             DbSet.AddRange(entities);
             await SaveChangesAsync();
@@ -108,8 +92,7 @@ namespace Core.Data
 
         public virtual IEnumerable<T> AddCollectionWithProxy(IEnumerable<T> entities)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
+           
 
             foreach (var entity in entities)
             {
@@ -121,8 +104,7 @@ namespace Core.Data
 
         public virtual Task UpdateAsync(T entity)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
+
 
             DbSet.Update(entity);
             return Task.CompletedTask;
@@ -130,9 +112,7 @@ namespace Core.Data
 
         public virtual Task UpdateCollectionAsync(IEnumerable<T> entities)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!"); 
-
+          
             DbSet.UpdateRange(entities);
             return Task.CompletedTask;
         }
@@ -140,8 +120,7 @@ namespace Core.Data
 
         public virtual IEnumerable<T> UpdateCollectionWithProxy(IEnumerable<T> entities)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
+          
 
             foreach (var entity in entities)
             {
@@ -152,37 +131,28 @@ namespace Core.Data
 
         public virtual Task RemoveByAsync(Func<T, bool> where)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
+          
             DbSet.RemoveRange(DbSet.ToList().Where(where));
             return Task.CompletedTask;
         }
 
         public virtual Task RemoveAsync(T entity)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
+          
             DbSet.Remove(entity);
             return Task.CompletedTask;
         }
 
         public virtual async Task SaveChangesAsync()
         {
-            if (Db == null)
-                throw new Exception("Context not found!!"); 
-
-            await Db.SaveChangesAsync().ConfigureAwait(false);
+            await UnitOfWork.CommitAsync(); 
         }
 
 
 
         public virtual IEnumerable<T> Get(bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
+           
             if (asNoTracking)
             {
                 return DbSet.AsNoTracking();
@@ -193,8 +163,6 @@ namespace Core.Data
 
         public virtual IEnumerable<T> Get(Expression<Func<T, bool>> expression, bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
 
             if (asNoTracking)
             {
@@ -207,10 +175,6 @@ namespace Core.Data
 
         public virtual IEnumerable<T> Get(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
-
             if (asNoTracking)
                 return DbSet.AsNoTracking().OrderBy(orderBy).Where(expression);
 
@@ -234,6 +198,7 @@ namespace Core.Data
         public void Dispose()
         {
             Db.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
