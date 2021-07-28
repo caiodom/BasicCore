@@ -16,23 +16,23 @@ namespace Core.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BaseController<TSrc, TDest> : MainController,IBaseController<TSrc> where TSrc : BaseEntityDTO
+    public abstract class BaseController<TSrc, TDest> : MainController,IBaseController<TSrc> where TSrc : BaseEntityDTO
                                                                                     where TDest : BaseEntity
     {
         private readonly IBaseAppService<TSrc, TDest> _baseAppService;
-        public BaseController(IBaseAppService<TSrc, TDest> baseAppService)
+        protected  BaseController(IBaseAppService<TSrc, TDest> baseAppService)
         {
             this._baseAppService = baseAppService;
         }
 
 
-        //[ClaimsAuthorize(nameof(TDest), "GET")]
+        
         [HttpGet]
-        public virtual async Task<IEnumerable<TSrc>> Get()
+        public  virtual async Task<IEnumerable<TSrc>> Get()
                      => await _baseAppService.GetAsync();
 
 
-        //[ClaimsAuthorize(nameof(TDest), "GET")]
+
         [HttpGet("{id:int}")]
         public virtual async Task<ActionResult<TSrc>> GetById(Guid id)
         {
@@ -44,7 +44,6 @@ namespace Core.WebAPI.Controllers
             return serviceReturn;
         }
 
-        [ClaimsAuthorize(nameof(TDest), "POST")]
         [HttpPost]
         public virtual async Task<ActionResult<TSrc>> Post(TSrc entity)
         {
@@ -58,7 +57,7 @@ namespace Core.WebAPI.Controllers
         }
 
         
-        [ClaimsAuthorize(nameof(TDest), "PUT")]
+
         [HttpPut]
         public virtual async Task<ActionResult<TSrc>> Put(Guid id, TSrc entity)
         {
@@ -71,7 +70,7 @@ namespace Core.WebAPI.Controllers
             return CustomResponse(entity);
         }
 
-        [ClaimsAuthorize(nameof(TDest), "DELETE")]
+
         [HttpDelete]
         public virtual async Task<ActionResult<TSrc>> Delete(TSrc entity)
         {

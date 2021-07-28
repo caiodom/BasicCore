@@ -10,10 +10,10 @@ namespace Core.WebAPI.Identity.Attribute
 {
     public class ClaimsAuthorizeAttribute:TypeFilterAttribute
     {
-        public ClaimsAuthorizeAttribute(string claimName,string claimValue)
+        public ClaimsAuthorizeAttribute(string claimType,string claimValue)
             :base(typeof(RequirementClaimFilter))
-        {
-            Arguments = new object[] { new Claim(claimName, claimValue) };
+        {           
+            Arguments = new object[] { new Claim(claimType, claimValue) };
         }
 
     }

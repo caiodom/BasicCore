@@ -27,7 +27,7 @@ namespace Core.WebAPI.Identity.Attribute
                 return;
             }
 
-            if (CustomAuthorization.ValidateUserClaim(context.HttpContext,
+            if (!CustomAuthorization.ValidateUserClaim(context.HttpContext,
                                                         _claim.Type,
                                                         _claim.Value))
                 context.Result = new StatusCodeResult(403);
