@@ -45,9 +45,9 @@ namespace Core.Interfaces
         Task RemoveAsync(T entity);
 
 
-        Task SaveChangesAsync();
+        Task<bool> SaveChangesAsync();
 
-
+        bool SaveChanges();
 
         IEnumerable<T> Get(bool asNoTracking = true);
 

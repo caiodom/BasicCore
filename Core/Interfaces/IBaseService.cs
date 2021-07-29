@@ -42,6 +42,8 @@ namespace Core.Interfaces
 
         Task RemoveAsync(T entity);
 
+        Task<bool> SaveChangesAsync();
+
 
 
 
@@ -55,5 +57,7 @@ namespace Core.Interfaces
 
 
         T GetById(Guid entityId, bool asNoTracking = true);
+
+        bool SaveChanges();
     }
 }

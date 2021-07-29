@@ -25,61 +25,71 @@ namespace Core.Service
 
         #region >> Async <<
 
-        public Task AddAsync(T entity) =>
-                _baseRepository.AddAsync(entity);
+        public virtual async Task AddAsync(T entity) 
+            => await _baseRepository.AddAsync(entity);
 
 
-        public Task AddCollectionAsync(IEnumerable<T> entities) =>
-                    _baseRepository.AddCollectionAsync(entities);
+        public virtual async Task AddCollectionAsync(IEnumerable<T> entities)
+                     => await _baseRepository.AddCollectionAsync(entities);
 
 
 
-        public Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
-                            => _baseRepository.GetAsync(expression, asNoTracking);
+        public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
+                            => await _baseRepository.GetAsync(expression, asNoTracking);
 
 
-        public Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
-                                   => _baseRepository.GetAsync(expression, orderBy, asNoTracking);
+        public virtual async  Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
+                                   => await _baseRepository.GetAsync(expression, orderBy, asNoTracking);
 
-        public Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
-                      => _baseRepository.GetByIdAsync(entityId, asNoTracking);
+        public virtual async Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
+                      => await _baseRepository.GetByIdAsync(entityId, asNoTracking);
 
-        public Task RemoveAsync(T entity)
-                    => _baseRepository.RemoveAsync(entity);
+        public virtual async Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
+                    => await _baseRepository.GetAsync(asNoTracking);
 
-        public Task RemoveByAsync(Func<T, bool> where)
-               => _baseRepository.RemoveByAsync(where);
+        public virtual async  Task RemoveAsync(T entity)
+                    => await _baseRepository.RemoveAsync(entity);
+
+        public virtual async Task RemoveByAsync(Func<T, bool> where)
+               => await _baseRepository.RemoveByAsync(where);
 
 
-        public Task UpdateAsync(T entity)
-                    => _baseRepository.UpdateAsync(entity);
+        public virtual async Task UpdateAsync(T entity)
+                    => await _baseRepository.UpdateAsync(entity);
 
-        public Task UpdateCollectionAsync(IEnumerable<T> entities)
-                    => _baseRepository.UpdateCollectionAsync(entities);
+        public virtual async Task UpdateCollectionAsync(IEnumerable<T> entities)
+                    => await _baseRepository.UpdateCollectionAsync(entities);
+
+
+
+        public virtual async Task<bool> SaveChangesAsync()
+                    => await _baseRepository.SaveChangesAsync();
+
 
         #endregion
 
         #region >> Not Async <<
-        public T GetById(Guid entityId, bool asNoTracking = true)
+        public virtual T GetById(Guid entityId, bool asNoTracking = true)
                     => _baseRepository.GetById(entityId, asNoTracking);
 
-        public IEnumerable<T> UpdateCollectionWithProxy(IEnumerable<T> entities)
+        public virtual IEnumerable<T> UpdateCollectionWithProxy(IEnumerable<T> entities)
                                 => _baseRepository.UpdateCollectionWithProxy(entities);
 
-        public IEnumerable<T> AddCollectionWithProxy(IEnumerable<T> entities)
+        public virtual IEnumerable<T> AddCollectionWithProxy(IEnumerable<T> entities)
                            => _baseRepository.AddCollectionWithProxy(entities);
 
-        public IEnumerable<T> Get(bool asNoTracking = true) =>
+        public virtual IEnumerable<T> Get(bool asNoTracking = true) =>
                                 _baseRepository.Get(asNoTracking);
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> expression, bool asNoTracking = true)
+        public virtual IEnumerable<T> Get(Expression<Func<T, bool>> expression, bool asNoTracking = true)
                                 => _baseRepository.Get(expression, asNoTracking);
 
-        public IEnumerable<T> Get(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
+        public virtual IEnumerable<T> Get(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
                             => _baseRepository.Get(expression, orderBy, asNoTracking);
 
-        public Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
-                            => _baseRepository.GetAsync(asNoTracking);
+        public bool SaveChanges()
+                    => _baseRepository.SaveChanges();
+
 
         #endregion
     }

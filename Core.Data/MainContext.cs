@@ -2,6 +2,7 @@
 
 using Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,24 +14,39 @@ namespace Core.Data
 {
     public class MainContext : DbContext, IUnitOfWork
     {
-        public MainContext(DbContextOptions options) 
+        private readonly IConfiguration _configuration;
+        public MainContext(DbContextOptions options,
+                           IConfiguration configuration) 
                 :base(options)
         {
-
+            this._configuration = configuration;
         }
 
-        public virtual async Task<bool> CommitAsync()
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+                    => optionsBuilder
+                            .UseLazyLoadingProxies()
+                            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+
+
+
+
+
+
+
+
+        private void RegistrationDateHandler()
         {
             foreach (var entry in ChangeTracker.Entries()
-                                              .Where(entry => entry.Entity
-                                                                 .GetType()
-                                                                 .GetProperty("RegistrationDate") != null))
+                                             .Where(entry => entry.Entity
+                                                                .GetType()
+                                                                .GetProperty("RegistrationDate") != null))
             {
                 if (entry.State == EntityState.Added)
                 {
                     entry.Property("RegistrationDate").CurrentValue = DateTime.Now;
 
-                    if(entry.GetType().GetProperty("Active")!=null)
+                    if (entry.GetType().GetProperty("Active") != null)
                         entry.Property("Active").CurrentValue = true;
                 }
 
@@ -39,11 +55,19 @@ namespace Core.Data
                     entry.Property("RegistrationDate").IsModified = false;
 
             }
+        }
 
+        public virtual async Task<bool> CommitAsync()
+        {
+            RegistrationDateHandler();
+            return await base.SaveChangesAsync() > 0;
+        }
 
-            var success = await base.SaveChangesAsync() > 0;
+        public virtual bool Commit()
+        {
+            RegistrationDateHandler();
 
-            return success;
+            return base.SaveChanges() > 0;
         }
 
 

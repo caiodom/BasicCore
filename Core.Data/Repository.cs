@@ -24,71 +24,46 @@ namespace Core.Data
         }
 
         public virtual async Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
-        {
+                =>asNoTracking
+                ? await DbSet.AsNoTracking()
+                             .ToListAsync()
+                : await DbSet.ToListAsync();
+        
 
-            if (asNoTracking)
-            {
-                return await DbSet.AsNoTracking()
-                                    .ToListAsync();
-            }
+        public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression,bool asNoTracking = true)
+                        => asNoTracking
+                            ? await DbSet.AsNoTracking()
+                                                .Where(expression)
+                                                .ToListAsync()
+                            : await DbSet.Where(expression).ToListAsync();
 
-            return await DbSet.ToListAsync();
-        }
-
-        public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
-        {
-         
-            if (asNoTracking)
-            {
-                return await DbSet.AsNoTracking()
-                                    .Where(expression)
-                                    .ToListAsync();
-            }
-
-            return await DbSet.Where(expression).ToListAsync();
-        }
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
-        {
-           
-            if (asNoTracking)
-                return await DbSet.AsNoTracking().OrderBy(orderBy).Where(expression).ToListAsync().ConfigureAwait(false);
+                        => asNoTracking
+                                ? await DbSet.AsNoTracking()
+                                             .OrderBy(orderBy)
+                                             .Where(expression)
+                                              .ToListAsync()
+                                : await DbSet.OrderBy(orderBy)
+                                                .Where(expression)
+                                                .ToListAsync();
 
-
-
-            return await DbSet.OrderBy(orderBy)
-                                .Where(expression)
-                                .ToListAsync()
-                                .ConfigureAwait(false);
-
-        }
+        
 
         public virtual async Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
-        {
-          
-            return asNoTracking
+            => asNoTracking
                 ? await DbSet.AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == entityId).ConfigureAwait(false)
                 : await DbSet.FindAsync(entityId).ConfigureAwait(false);
-        }
+        
 
         public virtual async Task AddAsync(T entity)
-        {
-
-          
-
-            DbSet.Add(entity);
-            ///await DbSet.AddAsync(entity).ConfigureAwait(false);
-            await SaveChangesAsync();
-           
-        }
+                            =>await DbSet.AddAsync(entity);            
+        
 
         public virtual async Task AddCollectionAsync(IEnumerable<T> entities)
-        {
-          
-
-            DbSet.AddRange(entities);
-            await SaveChangesAsync();
-        }
+                        => await DbSet.AddRangeAsync(entities);
+            
+        
 
         public virtual IEnumerable<T> AddCollectionWithProxy(IEnumerable<T> entities)
         {
@@ -102,19 +77,19 @@ namespace Core.Data
         }
 
 
-        public virtual Task UpdateAsync(T entity)
+        public virtual async Task UpdateAsync(T entity)
         {
 
 
             DbSet.Update(entity);
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public virtual Task UpdateCollectionAsync(IEnumerable<T> entities)
+        public virtual async Task UpdateCollectionAsync(IEnumerable<T> entities)
         {
           
             DbSet.UpdateRange(entities);
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
 
@@ -129,24 +104,23 @@ namespace Core.Data
             }
         }
 
-        public virtual Task RemoveByAsync(Func<T, bool> where)
+        public virtual async Task RemoveByAsync(Func<T, bool> where)
         {
           
-            DbSet.RemoveRange(DbSet.ToList().Where(where));
-            return Task.CompletedTask;
+            DbSet.RemoveRange(DbSet.Where(where));
+            await Task.CompletedTask;
         }
 
-        public virtual Task RemoveAsync(T entity)
+        public virtual async Task RemoveAsync(T entity)
         {
           
             DbSet.Remove(entity);
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public virtual async Task SaveChangesAsync()
-        {
-            await UnitOfWork.CommitAsync(); 
-        }
+        public virtual async Task<bool> SaveChangesAsync()
+                                =>await UnitOfWork.CommitAsync(); 
+        
 
 
 
@@ -195,6 +169,9 @@ namespace Core.Data
                 : DbSet.Find(entityId);
         }
 
+        public virtual bool  SaveChanges()
+                        => UnitOfWork.Commit();
+        
         public void Dispose()
         {
             Db.Dispose();
