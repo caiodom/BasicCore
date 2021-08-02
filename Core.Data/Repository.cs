@@ -1,6 +1,7 @@
 ﻿
 using Core.DomainObjects;
 using Core.Interfaces;
+using Core.Specification.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -48,7 +49,11 @@ namespace Core.Data
                                                 .Where(expression)
                                                 .ToListAsync();
 
-        
+
+        public async Task<IEnumerable<T>> GetAsync(ISpecification<T> spec, bool asNoTracking = true)
+                                => await GetAsync(spec.IsSatisfiedBy(), asNoTracking);
+
+
 
         public virtual async Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
             => asNoTracking
@@ -177,5 +182,7 @@ namespace Core.Data
             Db.Dispose();
             GC.SuppressFinalize(this);
         }
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Core.DomainObjects;
 using Core.Interfaces;
+using Core.Specification.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +90,9 @@ namespace Core.Service
 
         public bool SaveChanges()
                     => _baseRepository.SaveChanges();
+
+        public virtual async Task<IEnumerable<T>> GetAsync(ISpecification<T> spec, bool asNoTracking = true)
+                => await _baseRepository.GetAsync(spec, true);
 
 
         #endregion

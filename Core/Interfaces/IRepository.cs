@@ -1,4 +1,5 @@
 ﻿using Core.DomainObjects;
+using Core.Specification.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace Core.Interfaces
 
 
         Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true);
+
+        Task<IEnumerable<T>> GetAsync(ISpecification<T> spec,bool asNoTracking=true);
 
         Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true);
 

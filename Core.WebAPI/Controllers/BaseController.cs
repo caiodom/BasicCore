@@ -33,7 +33,7 @@ namespace Core.WebAPI.Controllers
 
 
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public virtual async Task<ActionResult<TSrc>> GetById(Guid id)
         {
             var serviceReturn = await _baseAppService.GetByIdAsync(id);
