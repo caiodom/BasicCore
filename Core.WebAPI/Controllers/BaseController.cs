@@ -82,6 +82,17 @@ namespace Core.WebAPI.Controllers
             return CustomResponse(entity);
         }
 
+        [HttpDelete("{id}")]
+        public virtual async Task<ActionResult> Delete(Guid id)
+        {
+            if (!ModelState.IsValid)
+                return CustomResponse(ModelState);
+
+            await _baseAppService.RemoveAsync(id);
+
+            return CustomResponse();
+        }
+
         protected virtual async Task<bool> UploadFileHandler(string currentDirectory, 
                                                                 IFormFile file, 
                                                                 string imgPrefix)

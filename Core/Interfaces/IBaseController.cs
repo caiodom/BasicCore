@@ -24,6 +24,8 @@ namespace Core.Interfaces
 
          Task<ActionResult<TSrc>> Delete(TSrc entity);
 
+        Task<ActionResult> Delete(Guid id);
+
 
 
 

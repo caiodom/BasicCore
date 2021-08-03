@@ -44,6 +44,9 @@ namespace Core.Application.AppService
         public Task RemoveAsync(TSrc entity)
                 => _baseService.RemoveAsync(SetMappedDomainEntity(entity));
 
+        public Task RemoveAsync(Guid id)
+        => _baseService.RemoveAsync(id);
+
         public Task UpdateAsync(TSrc entity)
                     => _baseService.UpdateAsync(SetMappedDomainEntity(entity));
 

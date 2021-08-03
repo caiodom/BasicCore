@@ -52,8 +52,10 @@ namespace Core.Data
 
 
                 if (entry.State == EntityState.Modified)
+                {
                     entry.Property("RegistrationDate").IsModified = false;
-
+                    entry.Property("ChangeDate").CurrentValue = DateTime.Now;
+                }
             }
         }
 

@@ -50,6 +50,10 @@ namespace Core.Service
 
         public virtual async  Task RemoveAsync(T entity)
                     => await _baseRepository.RemoveAsync(entity);
+        public virtual async Task RemoveAsync(Guid id)
+            => await _baseRepository.RemoveAsync(id);
+
+
 
         public virtual async Task RemoveByAsync(Func<T, bool> where)
                => await _baseRepository.RemoveByAsync(where);

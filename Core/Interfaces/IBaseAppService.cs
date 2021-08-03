@@ -25,6 +25,7 @@ namespace Core.Interfaces
         Task UpdateCollectionAsync(IEnumerable<TSrc> entities);
 
         Task RemoveAsync(TSrc entity);
+        Task RemoveAsync(Guid id);
 
 
 

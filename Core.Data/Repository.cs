@@ -123,6 +123,13 @@ namespace Core.Data
             await Task.CompletedTask;
         }
 
+        public virtual async Task RemoveAsync(Guid id)
+        {
+            var entity = await GetByIdAsync(id);
+
+            await RemoveAsync(entity);
+        }
+
         public virtual async Task<bool> SaveChangesAsync()
                                 =>await UnitOfWork.CommitAsync(); 
         

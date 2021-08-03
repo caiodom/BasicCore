@@ -46,6 +46,7 @@ namespace Core.Interfaces
 
 
         Task RemoveAsync(T entity);
+        Task RemoveAsync(Guid id);
 
 
         Task<bool> SaveChangesAsync();
