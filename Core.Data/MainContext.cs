@@ -29,57 +29,27 @@ namespace Core.Data
                     .UseSqlServer(connectionString);
         }
 
-     
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-                    => optionsBuilder
-                            .UseLazyLoadingProxies()
-                            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));*/
-
-
-
-
-
-
-
-
-        private void RegistrationDateHandler()
+      
+        public virtual async Task<bool> CommitAsync(params Action[] actionValidations)
         {
-            foreach (var entry in ChangeTracker.Entries()
-                                             .Where(entry => entry.Entity
-                                                                .GetType()
-                                                                .GetProperty("RegistrationDate") != null))
-            {
-                if (entry.State == EntityState.Added)
-                {
-                    entry.Property("RegistrationDate").CurrentValue = DateTime.Now;
-
-                    if (entry.GetType().GetProperty("Active") != null)
-                        entry.Property("Active").CurrentValue = true;
-                }
-
-
-                if (entry.State == EntityState.Modified)
-                {
-                    entry.Property("RegistrationDate").IsModified = false;
-                    entry.Property("ChangeDate").CurrentValue = DateTime.Now;
-                }
-            }
-        }
-
-        public virtual async Task<bool> CommitAsync()
-        {
-            RegistrationDateHandler();
+            ValidationHandler(actionValidations);
             return await base.SaveChangesAsync() > 0;
         }
 
-        public virtual bool Commit()
+        public virtual bool Commit(params Action[] actionValidations)
         {
-            RegistrationDateHandler();
-
+            ValidationHandler(actionValidations);
             return base.SaveChanges() > 0;
         }
 
+        private void ValidationHandler(params Action[] actionValidations)
+        {
+            if (actionValidations != null)
+                foreach (var actionValidation in actionValidations)
+                    actionValidation.Invoke();
 
+            
+        }
         
     }
 }

@@ -8,7 +8,7 @@ namespace Core.Interfaces
 {
     public interface IUnitOfWork
     {
-        Task<bool> CommitAsync();
-        bool Commit();
+        Task<bool> CommitAsync(params Action[] actionValidations);
+        bool Commit(params Action[] actionValidations);
     }
 }
