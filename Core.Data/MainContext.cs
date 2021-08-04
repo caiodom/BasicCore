@@ -22,11 +22,18 @@ namespace Core.Data
             this._configuration = configuration;
         }
 
+        public virtual void BaseOnConfiguringSqlServer(DbContextOptionsBuilder optionsBuilder,string connectionString)
+        {
+            optionsBuilder
+                    .UseLazyLoadingProxies()
+                    .UseSqlServer(connectionString);
+        }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+     
+        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
                     => optionsBuilder
                             .UseLazyLoadingProxies()
-                            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+                            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));*/
 
 
 

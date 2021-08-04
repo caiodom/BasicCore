@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace Core.Data
 {
-    public abstract class Repository<T>:IRepository<T> where T:BaseEntity,new()
+    public class Repository<T>:IRepository<T> where T:BaseEntity,new()
     {
-        protected MainContext Db;
-        protected DbSet<T> DbSet;
+        public MainContext Db;
+        public DbSet<T> DbSet;
         public IUnitOfWork UnitOfWork => Db;
-        protected Repository(MainContext mainContext)
+        public Repository(MainContext mainContext)
         {
             Db = mainContext;
             DbSet= Db.Set<T>();

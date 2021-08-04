@@ -23,35 +23,35 @@ namespace Core.Application.AppService
             this._mapper = mapper;
         }
 
-        public async Task<IEnumerable<TSrc>> GetAsync(bool asNoTracking = true)
+        public virtual async Task<IEnumerable<TSrc>> GetAsync(bool asNoTracking = true)
                 => GetMappedDTO(await _baseService.GetAsync(asNoTracking));
 
 
 
-        public async Task<TSrc> GetByIdAsync(Guid entityId, bool asNoTracking = true)
+        public virtual async Task<TSrc> GetByIdAsync(Guid entityId, bool asNoTracking = true)
                 => GetMappedDTO(await _baseService.GetByIdAsync(entityId, asNoTracking));
 
 
 
-        public Task AddAsync(TSrc entity)
-            => _baseService.AddAsync(SetMappedDomainEntity(entity));
+        public virtual async Task AddAsync(TSrc entity)
+            => await _baseService.AddAsync(SetMappedDomainEntity(entity));
 
 
 
-        public Task AddCollectionAsync(IEnumerable<TSrc> entities)
-            => _baseService.AddCollectionAsync(SetMappedDomainEntity(entities));
+        public virtual async Task AddCollectionAsync(IEnumerable<TSrc> entities)
+            =>  await _baseService.AddCollectionAsync(SetMappedDomainEntity(entities));
 
-        public Task RemoveAsync(TSrc entity)
-                => _baseService.RemoveAsync(SetMappedDomainEntity(entity));
+        public virtual async Task RemoveAsync(TSrc entity)
+                => await _baseService.RemoveAsync(SetMappedDomainEntity(entity));
 
-        public Task RemoveAsync(Guid id)
-        => _baseService.RemoveAsync(id);
+        public virtual async Task RemoveAsync(Guid id)
+                => await _baseService.RemoveAsync(id);
 
-        public Task UpdateAsync(TSrc entity)
-                    => _baseService.UpdateAsync(SetMappedDomainEntity(entity));
+        public virtual async Task UpdateAsync(TSrc entity)
+                    => await  _baseService.UpdateAsync(SetMappedDomainEntity(entity));
 
-        public Task UpdateCollectionAsync(IEnumerable<TSrc> entities)
-                    => _baseService.UpdateCollectionAsync(SetMappedDomainEntity(entities));
+        public virtual async Task UpdateCollectionAsync(IEnumerable<TSrc> entities)
+                    => await _baseService.UpdateCollectionAsync(SetMappedDomainEntity(entities));
 
         protected TSrc GetMappedDTO(TDest domainEntity)
                 => _mapper.Map<TSrc>(domainEntity);

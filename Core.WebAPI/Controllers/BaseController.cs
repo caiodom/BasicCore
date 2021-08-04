@@ -17,7 +17,7 @@ namespace Core.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public abstract class BaseController<TSrc, TDest> : MainController,IBaseController<TSrc> where TSrc : BaseEntityDTO
-                                                                                    where TDest : BaseEntity
+                                                                                              where TDest : BaseEntity
     {
         private readonly IBaseAppService<TSrc, TDest> _baseAppService;
         protected  BaseController(IBaseAppService<TSrc, TDest> baseAppService)
