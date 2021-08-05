@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Core.Application.AppService
 {
     public class BaseAppService<TSrc, TDest>:IBaseAppService<TSrc,TDest> where TSrc : BaseEntityDTO
-                                             where TDest : BaseEntity, new()
+                                                                         where TDest : BaseEntity, new()
     {
 
         private readonly IMapper _mapper;
