@@ -34,18 +34,18 @@ namespace Core.WebAPI.Controllers
 
 
         [HttpGet("{id}")]
-        public virtual async Task<ActionResult<TSrc>> GetById(Guid id)
+        public virtual async Task<ActionResult> GetById(Guid id)
         {
             var serviceReturn = await _baseAppService.GetByIdAsync(id);
 
             if (serviceReturn == null)
                 return NotFound();
 
-            return serviceReturn;
+            return CustomResponse(serviceReturn);
         }
 
         [HttpPost]
-        public virtual async Task<ActionResult<TSrc>> Post(TSrc entity)
+        public virtual async Task<ActionResult> Post(TSrc entity)
         {
             if (!ModelState.IsValid)
                 return CustomResponse(ModelState);
@@ -59,7 +59,7 @@ namespace Core.WebAPI.Controllers
         
 
         [HttpPut]
-        public virtual async Task<ActionResult<TSrc>> Put(Guid id, TSrc entity)
+        public virtual async Task<ActionResult> Put(Guid id, TSrc entity)
         {
 
             if (!ModelState.IsValid)
@@ -72,7 +72,7 @@ namespace Core.WebAPI.Controllers
 
 
         [HttpDelete]
-        public virtual async Task<ActionResult<TSrc>> Delete(TSrc entity)
+        public virtual async Task<ActionResult> Delete(TSrc entity)
         {
             if (!ModelState.IsValid)
                 return CustomResponse(ModelState);

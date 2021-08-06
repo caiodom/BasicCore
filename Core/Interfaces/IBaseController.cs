@@ -13,16 +13,16 @@ namespace Core.Interfaces
          Task<IEnumerable<TSrc>> Get();
 
 
-         Task<ActionResult<TSrc>> GetById(Guid id);
+         Task<ActionResult> GetById(Guid id);
 
 
-         Task<ActionResult<TSrc>> Post(TSrc entity);
+         Task<ActionResult> Post(TSrc entity);
 
 
-         Task<ActionResult<TSrc>> Put(Guid id, TSrc entity);
+         Task<ActionResult> Put(Guid id, TSrc entity);
 
 
-         Task<ActionResult<TSrc>> Delete(TSrc entity);
+         Task<ActionResult> Delete(TSrc entity);
 
         Task<ActionResult> Delete(Guid id);
 
