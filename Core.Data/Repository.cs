@@ -1,4 +1,5 @@
 ﻿
+using Core.Data.Extensions;
 using Core.DomainObjects;
 using Core.Interfaces;
 using Core.Specification.Interfaces;
@@ -29,7 +30,20 @@ namespace Core.Data
                 ? await DbSet.AsNoTracking()
                              .ToListAsync()
                 : await DbSet.ToListAsync();
-        
+
+
+        public virtual async Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true)
+                         => asNoTracking
+                            ? await DbSet.AsNoTracking().AnyAsync(spec.IsSatisfiedBy())
+                            : await DbSet.AnyAsync(spec.IsSatisfiedBy());
+                
+                   
+        public virtual async Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
+                         => asNoTracking
+                            ? await DbSet.AsNoTracking().AnyAsync(expression)
+                            : await DbSet.AnyAsync(expression);
+
+
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression,bool asNoTracking = true)
                         => asNoTracking
@@ -37,6 +51,48 @@ namespace Core.Data
                                                 .Where(expression)
                                                 .ToListAsync()
                             : await DbSet.Where(expression).ToListAsync();
+
+
+        public Task<T> GetUniqueAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true, bool isFirst = false, bool isSingle = false)
+        {
+            IQueryable<T> queryable = ValidateTracking(asNoTracking);
+
+            if (isFirst.Equals(isSingle))
+                throw new Exception($"{nameof(isFirst)} parameter cannot be the same as { nameof(isSingle)}");
+
+
+            if (isSingle)
+                return queryable.SingleOrDefaultAsync(expression);
+            else
+                return queryable.FirstOrDefaultAsync(expression);
+
+        }
+        public Task<T> GetUniqueAsync(ISpecification<T> spec, bool asNoTracking = true, bool isFirst = false, bool isSingle = false)
+        {
+            IQueryable<T> queryable= ValidateTracking(asNoTracking);
+
+            if (isFirst.Equals(isSingle))
+                throw new Exception($"{nameof(isFirst)} parameter cannot be the same as { nameof(isSingle)}");
+
+
+            if (isSingle)
+                return queryable.SingleOrDefaultAsync(spec.IsSatisfiedBy());
+            else 
+                return queryable.FirstOrDefaultAsync(spec.IsSatisfiedBy());
+
+        }
+
+        
+
+        public IQueryable<T> ValidateTracking(bool asNoTracking)
+                => (asNoTracking)
+                        ? DbSet.AsNoTracking()
+                        : DbSet;
+
+        public Task<T> GetFirstAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true, bool isFirst = false, bool isSingle = false)
+        {
+            throw new NotImplementedException();
+        }
 
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
@@ -183,6 +239,10 @@ namespace Core.Data
 
         public virtual bool  SaveChanges()
                         => UnitOfWork.Commit();
+
+        public void DettachMe(T entity)
+             =>Db.DetachLocal<T>(entity, entity.Id);
+        
         
         public void Dispose()
         {
@@ -190,6 +250,21 @@ namespace Core.Data
             GC.SuppressFinalize(this);
         }
 
+        public void Add(T entity)
+        {
+            DbSet.Add(entity);
+        }
+        public void Update(T entity)
+        {
+            DbSet.Update(entity);
+        }
 
+        public void Remove(T entity)
+        {
+            DbSet.Remove(entity);
+        }
+
+
+       
     }
 }

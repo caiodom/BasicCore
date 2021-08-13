@@ -28,7 +28,12 @@ namespace Core.Interfaces
 
         IEnumerable<T> AddCollectionWithProxy(IEnumerable<T> entities);
 
-
+        Task<T> GetUniqueAsync(ISpecification<T> spec, bool asNoTracking = true,
+                                                  bool isFirst = false,
+                                                    bool isSingle = false);
+        Task<T> GetFirstAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true,
+                                                                    bool isFirst = false,
+                                                                    bool isSingle = false);
 
         Task UpdateAsync(T entity);
 
@@ -45,6 +50,9 @@ namespace Core.Interfaces
         Task RemoveAsync(T entity);
         Task RemoveAsync(Guid id);
 
+        Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true);
+        Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
+
         Task<bool> SaveChangesAsync();
 
 
@@ -60,7 +68,9 @@ namespace Core.Interfaces
 
 
         T GetById(Guid entityId, bool asNoTracking = true);
-
+        void Add(T entity);
+        void Update(T entity);
+        void Remove(T entity);
         bool SaveChanges();
     }
 }

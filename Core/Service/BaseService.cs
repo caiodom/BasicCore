@@ -65,7 +65,25 @@ namespace Core.Service
         public virtual async Task UpdateCollectionAsync(IEnumerable<T> entities)
                     => await _baseRepository.UpdateCollectionAsync(entities);
 
+        public async Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true)
+                    => await _baseRepository.ConditionalQueryAsync(spec,asNoTracking);
 
+        public async Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
+                        => await _baseRepository.ConditionalQueryAsync(expression, asNoTracking);
+
+        public async Task<T> GetUniqueAsync(ISpecification<T> spec,
+                                                    bool asNoTracking = true,
+                                                    bool isFirst = false, bool
+                                                    isSingle = false)
+                                                        => await _baseRepository
+                                                                    .GetUniqueAsync(spec, asNoTracking, isFirst, isSingle);
+
+        public async Task<T> GetFirstAsync(Expression<Func<T, bool>> expression,
+                                      bool asNoTracking = true,
+                                      bool isFirst = false,
+                                      bool isSingle = false)
+                                                 => await _baseRepository
+                                                            .GetUniqueAsync(expression, asNoTracking, isFirst, isSingle);
 
         public virtual async Task<bool> SaveChangesAsync()
                     => await _baseRepository.SaveChangesAsync();
@@ -92,11 +110,24 @@ namespace Core.Service
         public virtual IEnumerable<T> Get(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
                             => _baseRepository.Get(expression, orderBy, asNoTracking);
 
+        public virtual void Add(T entity)
+                    => _baseRepository.Add(entity);
+
         public bool SaveChanges()
                     => _baseRepository.SaveChanges();
 
         public virtual async Task<IEnumerable<T>> GetAsync(ISpecification<T> spec, bool asNoTracking = true)
                 => await _baseRepository.GetAsync(spec, true);
+
+        public virtual void Update(T entity) 
+            => _baseRepository.Update(entity);
+
+        public virtual void Remove(T entity)
+            => _baseRepository.Remove(entity);
+
+        public virtual void DettachMe(T entity)
+            => _baseRepository.DettachMe(entity);
+
 
 
         #endregion

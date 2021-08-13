@@ -21,6 +21,14 @@ namespace Core.Interfaces
 
         Task<IEnumerable<T>> GetAsync(ISpecification<T> spec,bool asNoTracking=true);
 
+
+        Task<T> GetUniqueAsync(ISpecification<T> spec,bool asNoTracking=true,
+                                                    bool isFirst=false,
+                                                      bool isSingle=false);
+        Task<T> GetUniqueAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true,
+                                                                    bool isFirst = false,
+                                                                    bool isSingle = false);
+
         Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true);
 
         Task AddAsync(T entity);
@@ -48,6 +56,10 @@ namespace Core.Interfaces
         Task RemoveAsync(T entity);
         Task RemoveAsync(Guid id);
 
+        Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true);
+        Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
+
+        IQueryable<T> ValidateTracking(bool asNoTracking);
 
         Task<bool> SaveChangesAsync();
 
@@ -63,5 +75,10 @@ namespace Core.Interfaces
 
 
         T GetById(Guid entityId, bool asNoTracking = true);
+        void Add(T entity);
+        void Update(T entity);
+        void Remove(T entity);
+
+        void DettachMe(T entity);
     }
 }
