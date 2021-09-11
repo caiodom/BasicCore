@@ -85,8 +85,6 @@ namespace Core.Service
                                                  => await _baseRepository
                                                             .GetUniqueAsync(expression, asNoTracking, isFirst, isSingle);
 
-        public virtual async Task<bool> SaveChangesAsync()
-                    => await _baseRepository.SaveChangesAsync();
 
 
         #endregion
@@ -112,9 +110,6 @@ namespace Core.Service
 
         public virtual void Add(T entity)
                     => _baseRepository.Add(entity);
-
-        public bool SaveChanges()
-                    => _baseRepository.SaveChanges();
 
         public virtual async Task<IEnumerable<T>> GetAsync(ISpecification<T> spec, bool asNoTracking = true)
                 => await _baseRepository.GetAsync(spec, true);

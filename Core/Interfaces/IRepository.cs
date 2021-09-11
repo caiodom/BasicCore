@@ -1,5 +1,6 @@
 ﻿using Core.DomainObjects;
 using Core.Specification.Interfaces;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IRepository<T> : IDisposable where T : BaseEntity, new()
+    public interface IRepository<T>  where T : BaseEntity, new()
     {
-        IUnitOfWork UnitOfWork { get; }
 
         Task<IEnumerable<T>> GetAsync(bool asNoTracking = true);
         Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
@@ -30,6 +30,11 @@ namespace Core.Interfaces
                                                                     bool isSingle = false);
 
         Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true);
+
+        Task<List<T>> GetDataAsync(Expression<Func<T, bool>> expression = null,
+                                   Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
+                                    int? skip = null,
+                                    int? take = null);
 
         Task AddAsync(T entity);
 
@@ -60,10 +65,6 @@ namespace Core.Interfaces
         Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
 
         IQueryable<T> ValidateTracking(bool asNoTracking);
-
-        Task<bool> SaveChangesAsync();
-
-        bool SaveChanges();
 
         IEnumerable<T> Get(bool asNoTracking = true);
 

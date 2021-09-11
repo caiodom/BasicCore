@@ -4,6 +4,7 @@ using Core.DomainObjects;
 using Core.Interfaces;
 using Core.Specification.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,6 @@ namespace Core.Data
     {
         public MainContext Db;
         public DbSet<T> DbSet;
-        public IUnitOfWork UnitOfWork => Db;
         public Repository(MainContext mainContext)
         {
             Db = mainContext;
@@ -89,10 +89,6 @@ namespace Core.Data
                         ? DbSet.AsNoTracking()
                         : DbSet;
 
-        public Task<T> GetFirstAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true, bool isFirst = false, bool isSingle = false)
-        {
-            throw new NotImplementedException();
-        }
 
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
@@ -109,7 +105,32 @@ namespace Core.Data
         public async Task<IEnumerable<T>> GetAsync(ISpecification<T> spec, bool asNoTracking = true)
                                 => await GetAsync(spec.IsSatisfiedBy(), asNoTracking);
 
+        public async Task<List<T>> GetDataAsync(
+            Expression<Func<T, bool>> expression = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
+            int? skip = null,
+            int? take = null)
+        {
+            var query = DbSet.AsQueryable();
 
+            if (expression != null)
+                query = query.Where(expression);
+            
+
+            if (include != null)
+                query = include(query);
+            
+
+            if (skip != null && skip.HasValue)
+                query = query.Skip(skip.Value);
+            
+
+            if (take != null && take.HasValue)
+                query = query.Take(take.Value);
+            
+
+            return await query.ToListAsync();
+        }
 
         public virtual async Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
             => asNoTracking
@@ -186,8 +207,6 @@ namespace Core.Data
             await RemoveAsync(entity);
         }
 
-        public virtual async Task<bool> SaveChangesAsync()
-                                =>await UnitOfWork.CommitAsync(); 
         
 
 
@@ -236,9 +255,6 @@ namespace Core.Data
                 ? DbSet.AsNoTracking().SingleOrDefault(entity => entity.Id == entityId)
                 : DbSet.Find(entityId);
         }
-
-        public virtual bool  SaveChanges()
-                        => UnitOfWork.Commit();
 
         public void DettachMe(T entity)
              =>Db.DetachLocal<T>(entity, entity.Id);
