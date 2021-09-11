@@ -53,8 +53,6 @@ namespace Core.Interfaces
         Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true);
         Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
 
-        Task<bool> SaveChangesAsync();
-
 
 
 
@@ -71,6 +69,5 @@ namespace Core.Interfaces
         void Add(T entity);
         void Update(T entity);
         void Remove(T entity);
-        bool SaveChanges();
     }
 }

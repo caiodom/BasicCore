@@ -16,13 +16,11 @@ namespace Core.Data
 {
     public class Repository<T>:IRepository<T> where T:BaseEntity,new()
     {
-        public MainContext Db;
-        public DbSet<T> DbSet;
-        public IUnitOfWork UnitOfWork => Db;
+        
+        protected readonly DbSet<T> DbSet;
         public Repository(MainContext mainContext)
         {
-            Db = mainContext;
-            DbSet= Db.Set<T>();
+            DbSet = mainContext.Set<T>();
         }
 
         public virtual async Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
@@ -185,12 +183,7 @@ namespace Core.Data
 
             await RemoveAsync(entity);
         }
-
-        public virtual async Task<bool> SaveChangesAsync()
-                                =>await UnitOfWork.CommitAsync(); 
-        
-
-
+       
 
         public virtual IEnumerable<T> Get(bool asNoTracking = true)
         {
@@ -229,26 +222,13 @@ namespace Core.Data
 
         public virtual T GetById(Guid entityId, bool asNoTracking = true)
         {
-            if (Db == null)
-                throw new Exception("Context not found!!");
-
             return asNoTracking
                 ? DbSet.AsNoTracking().SingleOrDefault(entity => entity.Id == entityId)
                 : DbSet.Find(entityId);
         }
 
-        public virtual bool  SaveChanges()
-                        => UnitOfWork.Commit();
-
-        public void DettachMe(T entity)
-             =>Db.DetachLocal<T>(entity, entity.Id);
+       
         
-        
-        public void Dispose()
-        {
-            Db.Dispose();
-            GC.SuppressFinalize(this);
-        }
 
         public void Add(T entity)
         {

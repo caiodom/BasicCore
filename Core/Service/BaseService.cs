@@ -14,7 +14,7 @@ namespace Core.Service
     {
         #region >> Variables <<
         private readonly IRepository<T> _baseRepository;
-        #endregion
+                #endregion
 
         #region >> Constructor <<
         public BaseService(IRepository<T> baseRepository)
@@ -85,8 +85,6 @@ namespace Core.Service
                                                  => await _baseRepository
                                                             .GetUniqueAsync(expression, asNoTracking, isFirst, isSingle);
 
-        public virtual async Task<bool> SaveChangesAsync()
-                    => await _baseRepository.SaveChangesAsync();
 
 
         #endregion
@@ -113,8 +111,6 @@ namespace Core.Service
         public virtual void Add(T entity)
                     => _baseRepository.Add(entity);
 
-        public bool SaveChanges()
-                    => _baseRepository.SaveChanges();
 
         public virtual async Task<IEnumerable<T>> GetAsync(ISpecification<T> spec, bool asNoTracking = true)
                 => await _baseRepository.GetAsync(spec, true);
@@ -124,9 +120,6 @@ namespace Core.Service
 
         public virtual void Remove(T entity)
             => _baseRepository.Remove(entity);
-
-        public virtual void DettachMe(T entity)
-            => _baseRepository.DettachMe(entity);
 
 
 

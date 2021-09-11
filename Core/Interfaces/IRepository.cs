@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IRepository<T> : IDisposable where T : BaseEntity, new()
+    public interface IRepository<T> where T : BaseEntity, new()
     {
-        IUnitOfWork UnitOfWork { get; }
-
+    
         Task<IEnumerable<T>> GetAsync(bool asNoTracking = true);
         Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
 
@@ -61,10 +60,6 @@ namespace Core.Interfaces
 
         IQueryable<T> ValidateTracking(bool asNoTracking);
 
-        Task<bool> SaveChangesAsync();
-
-        bool SaveChanges();
-
         IEnumerable<T> Get(bool asNoTracking = true);
 
 
@@ -78,7 +73,5 @@ namespace Core.Interfaces
         void Add(T entity);
         void Update(T entity);
         void Remove(T entity);
-
-        void DettachMe(T entity);
     }
 }
