@@ -5,6 +5,7 @@ using Core.Interfaces;
 using Core.Specification.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,16 @@ namespace Core.Data
 {
     public class Repository<T>:IRepository<T> where T:BaseEntity,new()
     {
-        public MainContext Db;
+        private MainContext Db;
         public DbSet<T> DbSet;
         public Repository(MainContext mainContext)
         {
             Db = mainContext;
             DbSet= Db.Set<T>();
         }
+
+        
+        
 
         public virtual async Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
                 =>asNoTracking
@@ -280,7 +284,14 @@ namespace Core.Data
             DbSet.Remove(entity);
         }
 
+        public virtual void Remove(Guid id)
+        {
+            var entity =  GetById(id);
 
-       
+             Remove(entity);
+        }
+
+
+
     }
 }

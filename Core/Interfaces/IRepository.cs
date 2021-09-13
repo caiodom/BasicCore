@@ -1,6 +1,7 @@
 ﻿using Core.DomainObjects;
 using Core.Specification.Interfaces;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Core.Interfaces
 
         Task RemoveByAsync(Func<T, bool> where);
 
-
+        void Remove(Guid id);
         Task RemoveAsync(T entity);
         Task RemoveAsync(Guid id);
 

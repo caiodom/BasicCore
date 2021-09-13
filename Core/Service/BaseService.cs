@@ -26,6 +26,7 @@ namespace Core.Service
 
         #region >> Async <<
 
+
         public virtual async Task AddAsync(T entity) 
             => await _baseRepository.AddAsync(entity);
 
@@ -90,6 +91,8 @@ namespace Core.Service
         #endregion
 
         #region >> Not Async <<
+
+
         public virtual T GetById(Guid entityId, bool asNoTracking = true)
                     => _baseRepository.GetById(entityId, asNoTracking);
 
@@ -122,6 +125,9 @@ namespace Core.Service
 
         public virtual void DettachMe(T entity)
             => _baseRepository.DettachMe(entity);
+        public virtual  void Remove(Guid id)
+                =>  _baseRepository.Remove(id);
+
 
 
 

@@ -11,6 +11,8 @@ namespace Core.Interfaces
 {
     public interface IBaseService<T> where T : BaseEntity, new()
     {
+
+
         Task<IEnumerable<T>> GetAsync(bool asNoTracking = true);
         Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
 
@@ -49,6 +51,7 @@ namespace Core.Interfaces
 
         Task RemoveAsync(T entity);
         Task RemoveAsync(Guid id);
+        void Remove(Guid id);
 
         Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true);
         Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true);
