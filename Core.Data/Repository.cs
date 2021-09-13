@@ -31,27 +31,27 @@ namespace Core.Data
 
         public virtual async Task<IEnumerable<T>> GetAsync(bool asNoTracking = true)
                 =>asNoTracking
-                ? await DbSet.AsNoTracking()
+                ? await DbSet.AsNoTrackingWithIdentityResolution()
                              .ToListAsync()
                 : await DbSet.ToListAsync();
 
 
         public virtual async Task<bool> ConditionalQueryAsync(ISpecification<T> spec, bool asNoTracking = true)
                          => asNoTracking
-                            ? await DbSet.AsNoTracking().AnyAsync(spec.IsSatisfiedBy())
+                            ? await DbSet.AsNoTrackingWithIdentityResolution().AnyAsync(spec.IsSatisfiedBy())
                             : await DbSet.AnyAsync(spec.IsSatisfiedBy());
                 
                    
         public virtual async Task<bool> ConditionalQueryAsync(Expression<Func<T, bool>> expression, bool asNoTracking = true)
                          => asNoTracking
-                            ? await DbSet.AsNoTracking().AnyAsync(expression)
+                            ? await DbSet.AsNoTrackingWithIdentityResolution().AnyAsync(expression)
                             : await DbSet.AnyAsync(expression);
 
 
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression,bool asNoTracking = true)
                         => asNoTracking
-                            ? await DbSet.AsNoTracking()
+                            ? await DbSet.AsNoTrackingWithIdentityResolution()
                                                 .Where(expression)
                                                 .ToListAsync()
                             : await DbSet.Where(expression).ToListAsync();
@@ -90,14 +90,14 @@ namespace Core.Data
 
         public IQueryable<T> ValidateTracking(bool asNoTracking)
                 => (asNoTracking)
-                        ? DbSet.AsNoTracking()
+                        ? DbSet.AsNoTrackingWithIdentityResolution()
                         : DbSet;
 
 
 
         public virtual async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
                         => asNoTracking
-                                ? await DbSet.AsNoTracking()
+                                ? await DbSet.AsNoTrackingWithIdentityResolution()
                                              .OrderBy(orderBy)
                                              .Where(expression)
                                               .ToListAsync()
@@ -138,7 +138,7 @@ namespace Core.Data
 
         public virtual async Task<T> GetByIdAsync(Guid entityId, bool asNoTracking = true)
             => asNoTracking
-                ? await DbSet.AsNoTracking().SingleOrDefaultAsync(entity => entity.Id == entityId).ConfigureAwait(false)
+                ? await DbSet.AsNoTrackingWithIdentityResolution().SingleOrDefaultAsync(entity => entity.Id == entityId).ConfigureAwait(false)
                 : await DbSet.FindAsync(entityId).ConfigureAwait(false);
         
 
@@ -220,7 +220,7 @@ namespace Core.Data
            
             if (asNoTracking)
             {
-                return DbSet.AsNoTracking();
+                return DbSet.AsNoTrackingWithIdentityResolution();
             }
 
             return DbSet;
@@ -231,7 +231,7 @@ namespace Core.Data
 
             if (asNoTracking)
             {
-                return DbSet.AsNoTracking()
+                return DbSet.AsNoTrackingWithIdentityResolution()
                                     .Where(expression);
             }
 
@@ -241,7 +241,7 @@ namespace Core.Data
         public virtual IEnumerable<T> Get(Expression<Func<T, bool>> expression, Expression<Func<T, object>> orderBy, bool asNoTracking = true)
         {
             if (asNoTracking)
-                return DbSet.AsNoTracking().OrderBy(orderBy).Where(expression);
+                return DbSet.AsNoTrackingWithIdentityResolution().OrderBy(orderBy).Where(expression);
 
 
 
@@ -256,7 +256,7 @@ namespace Core.Data
                 throw new Exception("Context not found!!");
 
             return asNoTracking
-                ? DbSet.AsNoTracking().SingleOrDefault(entity => entity.Id == entityId)
+                ? DbSet.AsNoTrackingWithIdentityResolution().SingleOrDefault(entity => entity.Id == entityId)
                 : DbSet.Find(entityId);
         }
 
