@@ -15,13 +15,16 @@ namespace Core.MessageBus
         private IBus _bus;
         private IAdvancedBus _advancedBus;
 
+
+
         private readonly string _connectionString;
         public MessageBus(string connectionString)
         {
             _connectionString = connectionString;
             TryConnect();
         }
-
+        public bool IsConnected => _bus?.Advanced.IsConnected ?? false;
+        public IAdvancedBus AdvancedBus => _bus?.Advanced;
 
         #region >> Private Methods <<
 
@@ -40,6 +43,7 @@ namespace Core.MessageBus
                 _bus = RabbitHutch.CreateBus(_connectionString);
             });
 
+            _advancedBus = _bus.Advanced;
             /*
                If the server goes down and the app realizes that it no longer has a connection, we will add the
                 EventHandler pointing to OnDisconnect
@@ -63,10 +67,7 @@ namespace Core.MessageBus
         }
         #endregion
 
-        public bool IsConnected => _bus?.Advanced.IsConnected ?? false;
-        public IAdvancedBus AdvancedBus => _bus?.Advanced;      
-
-     
+   
 
         public void Publish<T>(T message) where T : IntegrationEvent
         {

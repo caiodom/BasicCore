@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,14 @@ namespace Core.Interfaces
 {
     public interface IUnitOfWork
     {
-        Task<bool> CommitAsync(params Action[] actionValidations);
-        bool Commit(params Action[] actionValidations);
+
+        IDbContextTransaction BeginTransaction();
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        void Commit();
+        Task CommitAsync();
+        void RollBack();
+        Task RollBackAsync();
+        Task<bool> SaveChangesAsync(params Action[] actionValidations);
+        bool SaveChanges(params Action[] actionValidations);
     }
 }
