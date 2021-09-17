@@ -31,8 +31,9 @@ namespace Core.Messages
 
                 if (!await uow.SaveChangesAsync())
                     AddError("There was an error persisting the data.");
-                else
-                    await uow.CommitAsync();
+                
+
+                 uow.Commit();
 
 
                 return ValidationResult;
