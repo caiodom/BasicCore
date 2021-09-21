@@ -1,25 +1,23 @@
 ﻿using FluentValidation.Results;
-using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.Messages
+namespace Core.Messages.Commands.Base
 {
-   public abstract class Command:Message,IRequest<ValidationResult>
+    public abstract class BaseCommand : Message
     {
 
         public DateTime Timestamp { get; set; }
 
         public ValidationResult ValidationResult { get; set; }
 
-        protected Command()
+        protected BaseCommand(DateTime dtTimeStamp)
         {
-            Timestamp = DateTime.Now;
+            Timestamp = dtTimeStamp;
         }
-
 
         public virtual bool IsValid()
         {

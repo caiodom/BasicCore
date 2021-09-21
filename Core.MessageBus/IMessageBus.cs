@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.MessageBus
 {
-    public interface IMessageBus:IDisposable
+    public interface IMessageBus : IDisposable
     {
         bool IsConnected { get; }
         IAdvancedBus AdvancedBus { get; }
@@ -20,7 +20,8 @@ namespace Core.MessageBus
 
         void Subscribe<T>(string subscriptionId, Action<T> onMessage) where T : class;
 
-        /*void*/Task SubscribeAsync<T>(string subscriptionId,Func<T,Task> onMessage) where T : class;
+        /*void*/
+        Task SubscribeAsync<T>(string subscriptionId, Func<T, Task> onMessage) where T : class;
 
         TResponse Request<TRequest, TResponse>(TRequest request)
                   where TRequest : IntegrationEvent
@@ -42,4 +43,26 @@ namespace Core.MessageBus
 
 
     }
+
+    public interface ITypedMessageBus<T> : IMessageBus where T : class, new()
+    {
+
+        IDisposable TypedRespondAsync<TRequest, TResponse>(Func<TRequest, Task<TResponse>> responder)
+            where TRequest : IntegrationEvent
+            where TResponse : TypedResponseMessage<T>;
+
+        IDisposable TypedRespond<TRequest, TResponse>(Func<TRequest, TResponse> responder)
+                 where TRequest : IntegrationEvent
+                 where TResponse : TypedResponseMessage<T>;
+
+
+        TResponse TypedRequest<TRequest, TResponse>(TRequest request)
+                where TRequest : IntegrationEvent
+                where TResponse : TypedResponseMessage<T>;
+
+        Task<TResponse> TypedRequestAsync<TRequest, TResponse>(TRequest request)
+                        where TRequest : IntegrationEvent
+                        where TResponse : TypedResponseMessage<T>;
+    }
 }
+

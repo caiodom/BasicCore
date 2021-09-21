@@ -12,8 +12,8 @@ namespace Core.MessageBus
 {
     public class MessageBus : IMessageBus
     {
-        private IBus _bus;
-        private IAdvancedBus _advancedBus;
+        protected IBus _bus;
+        protected IAdvancedBus _advancedBus;
 
 
 
@@ -28,7 +28,7 @@ namespace Core.MessageBus
 
         #region >> Private Methods <<
 
-        private void TryConnect()
+        protected void TryConnect()
         {
             if (IsConnected)
                 return;
@@ -53,7 +53,7 @@ namespace Core.MessageBus
         }
 
 
-        private void OnDisconnect(object sender, EventArgs e)
+        protected void OnDisconnect(object sender, EventArgs e)
         {
             /*
                 We put Polly which is a circuitBreaker trying to reconnect all the time
@@ -67,7 +67,7 @@ namespace Core.MessageBus
         }
         #endregion
 
-   
+
 
         public void Publish<T>(T message) where T : IntegrationEvent
         {
@@ -137,6 +137,49 @@ namespace Core.MessageBus
         public void Dispose()
         {
             _bus.Dispose();
+        }
+    }
+
+
+    public class TypedMessageBus<T> : MessageBus, ITypedMessageBus<T> where T : class, new()
+    {
+        public TypedMessageBus(string connectionString) : base(connectionString)
+        {
+
+        }
+
+        public  TResponse TypedRequest<TRequest, TResponse>(TRequest request)
+            where TRequest : IntegrationEvent
+            where TResponse : TypedResponseMessage<T>
+        {
+            TryConnect();
+            return _bus.Rpc.Request<TRequest, TResponse>(request);
+        }
+
+        public async Task<TResponse> TypedRequestAsync<TRequest, TResponse>(TRequest request)
+            where TRequest : IntegrationEvent
+            where TResponse : TypedResponseMessage<T>
+        {
+            TryConnect();
+            return await _bus.Rpc.RequestAsync<TRequest, TResponse>(request);
+        }
+
+        public IDisposable TypedRespond<TRequest, TResponse>(Func<TRequest, TResponse> responder)
+            where TRequest : IntegrationEvent
+            where TResponse : TypedResponseMessage<T>
+        {
+            base.TryConnect();
+            return _bus.Rpc.Respond(responder);
+        }
+
+        public IDisposable TypedRespondAsync<TRequest, TResponse>(Func<TRequest, Task<TResponse>> responder)
+            where TRequest : IntegrationEvent
+            where TResponse : TypedResponseMessage<T>
+        {
+            TryConnect();
+            return _bus.Rpc.RespondAsync<TRequest, TResponse>(responder)
+                           .GetAwaiter()
+                           .GetResult();
         }
     }
 }
