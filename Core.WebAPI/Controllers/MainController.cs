@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +48,34 @@ namespace Core.WebAPI.Controllers
         protected void CleanProcessingErrors()
         {
             Errors.Clear();
+        }
+
+        protected virtual async Task<bool> UploadFileHandler(string currentDirectory,
+                                                              IFormFile file,
+                                                              string imgPrefix)
+        {
+            if (file == null || file.Length == 0)
+            {
+                AddProcessingErrors("Provide an image for this product");
+                return false;
+            }
+
+
+            //currentDirectory=Directory.GetCurrentDirectory()
+            var path = Path.Combine(currentDirectory, "wwwroot", imgPrefix, file.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                AddProcessingErrors("A file with this name already exists!");
+                return false;
+            }
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return true;
         }
     }
 }
