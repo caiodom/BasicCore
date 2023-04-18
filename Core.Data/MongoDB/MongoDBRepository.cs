@@ -11,7 +11,7 @@ namespace Core.Data.MongoDB
 {
     public class MongoDBRepository<T>: IMongoDBRepository<T> where T:IBaseMongoEntity
     {
-        private readonly IMongoCollection<T> _mongoCollection;
+        protected readonly IMongoCollection<T> _mongoCollection;
 
         public MongoDBRepository(IDataBaseSettings settings)
         {

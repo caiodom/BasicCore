@@ -12,7 +12,7 @@ namespace Core.WebAPI.BffServices
     {
         protected readonly HttpClient _httpClient;
 
-        private readonly string _route;
+        protected readonly string _route;
         protected BaseBFFService(HttpClient httpClient,
                                             string gateway,
                                             string route)
